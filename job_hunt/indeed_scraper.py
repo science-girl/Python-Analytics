@@ -30,6 +30,8 @@ def main():
 
     try:
         response = requests.get(url)
+        if not response.status_code == 200:
+            return
         results = BeautifulSoup(response.content, "lxml")
         range_len = int(getTotalResults(results) / 10.0)
 
@@ -37,6 +39,8 @@ def main():
         for page in range(10,range_len, 10):
             url = url + "&start=" + str(page)
             response = requests.get(url)
+            if not response.status_code == 200:
+                return
             results = BeautifulSoup(response.content, "lxml")
 
             divs = results.find_all("h2", class_="jobtitle")
