@@ -34,9 +34,11 @@ def get_sector_change(data):
         if not link.find("a") == None:
             name = link.find("a").get_text()
         if not link.find("span", class_="chg") == None:
-            sector_dict[name] = link.find("span", class_="chg").get_text()
+            sector_dict[name] = float(
+                link.find("span", class_="chg").get_text().split('%')[0])
         if not link.find("span", class_="chr") == None:
-            sector_dict[name] = link.find("span", class_="chr").get_text()
+            sector_dict[name] = float(
+                link.find("span", class_="chr").get_text().split('%')[0])
     return sector_dict
 
 
@@ -60,11 +62,11 @@ def get_sector_data(data, sector_change):
     sector_sorted = sorted((value, key)
                            for (key, value) in sector_dict.items())
     return[sector_title, {"biggest_gainer": {
-        "equity": sector_sorted[len(sector_sorted)-1][1], "change": sector_sorted[len(sector_sorted)-1][0]}, "biggest_loser": {sector_sorted[0][1], "change": sector_sorted[0][0]}, "change":sector_change[sector_title]}]
+        "equity": sector_sorted[len(sector_sorted)-1][1], "change": sector_sorted[len(sector_sorted)-1][0]}, "biggest_loser":{"equity": sector_sorted[0][1], "change": sector_sorted[0][0]}, "change":sector_change[sector_title]}]
 
 
 def google_sector_report():
-
+    json_string = {}
     try:
         import json
         result = {}
@@ -78,11 +80,11 @@ def google_sector_report():
         result["result"] = {energy[0]: energy[1],
                             industrials[0]: industrials[1], basic[0]: basic[1]}
 
-        print(json.dumps(result))
+        json_string = json.dumps(result)
     except:
         print("Unable to process HTML files")
 
-    # return json_string
+    return json_string
 
 
 google_sector_report()
