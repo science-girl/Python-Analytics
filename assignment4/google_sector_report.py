@@ -27,6 +27,8 @@ def get_file_data(file_name):
 
 
 def get_sector_data(data):
+    sector_title = data.find(
+        "div", class_="hdg top appbar-hide").get_text().strip()
     sector_dict = {}
     rows = data.find("table", class_="topmovers").find_all("tr")
     for row in rows:
@@ -36,21 +38,27 @@ def get_sector_data(data):
         cells = row.find_all("td")
         for cell in cells:
             if not cell.find("span", class_="chg") == None:
-                sector_dict[name] = cell.find_all("span", class_="chg")[
-                    1].get_text().split("%)")[0].split("(")[1]
+                sector_dict[name] = float(cell.find_all("span", class_="chg")[
+                    1].get_text().split("%)")[0].split("(")[1])
             if not cell.find("span", class_="chr") == None:
-                sector_dict[name] = cell.find_all("span", class_="chr")[
-                    1].get_text().split("%)")[0].split("(")[1]
-    print(sector_dict)
+                sector_dict[name] = float(cell.find_all("span", class_="chr")[
+                    1].get_text().split("%)")[0].split("(")[1])
+    sector_sorted = sorted((value, key)
+                           for (key, value) in sector_dict.items())
+    sector_json = {}
+    sector_json[sector_title] = {"biggest_gainer": {
+        "equity": sector_sorted[len(sector_sorted)-1][1], "change": sector_sorted[len(sector_sorted)-1][0]}, "biggest_loser": sector_sorted[0][1], "change": sector_sorted[0][0]}
+    return sector_json
 
 
 def google_sector_report():
 
     try:
         energy_data = get_file_data('Energy.htm')
-        get_sector_data(energy_data)
+        print(get_sector_data(energy_data))
         # finance_data = get_file_data('Google Finance.htm')
         # industrial_data = get_file_data('Industrials.htm')
+        # get_sector_data(industrial_data)
         # basic_mat_data = get_file_data('Basic Materials.htm')
     except:
         print("Unable to process HTML files")
