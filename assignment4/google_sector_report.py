@@ -41,10 +41,10 @@ def google_sector_report():
             for cell in cells:
                 if not cell.find("span", class_="chg") == None:
                     energy_dict[name] = cell.find_all(
-                        "span", class_="chg")[1].get_text()
+                        "span", class_="chg")[1].get_text().split("%)")[0].split("(")[1]
                 if not cell.find("span", class_="chr") == None:
                     energy_dict[name] = cell.find_all(
-                        "span", class_="chr")[1].get_text()
+                        "span", class_="chr")[1].get_text().split("%)")[0].split("(")[1]
         print(energy_dict)
         # finance_data = get_file_data('Google Finance.htm')
         # industrial_data = get_file_data('Industrials.htm')
