@@ -40,7 +40,7 @@ def get_sector_change(data):
     return sector_dict
 
 
-def get_sector_data(data):
+def get_sector_data(data, sector_change):
     sector_title = data.find(
         "div", class_="hdg top appbar-hide").get_text().strip()
     sector_dict = {}
@@ -59,10 +59,8 @@ def get_sector_data(data):
                     1].get_text().split("%)")[0].split("(")[1])
     sector_sorted = sorted((value, key)
                            for (key, value) in sector_dict.items())
-    # sector_json = {}
     return[sector_title, {"biggest_gainer": {
-        "equity": sector_sorted[len(sector_sorted)-1][1], "change": sector_sorted[len(sector_sorted)-1][0]}, "biggest_loser": sector_sorted[0][1], "change": sector_sorted[0][0]}]
-    # return sector_json
+        "equity": sector_sorted[len(sector_sorted)-1][1], "change": sector_sorted[len(sector_sorted)-1][0]}, "biggest_loser": {sector_sorted[0][1], "change": sector_sorted[0][0]}, "change":sector_change[sector_title]}]
 
 
 def google_sector_report():
@@ -70,15 +68,17 @@ def google_sector_report():
     try:
         import json
         result = {}
-        energy = get_sector_data(get_file_data('Energy.htm'))
-        industrials = get_sector_data(get_file_data('Industrials.htm'))
-        basic = get_sector_data(get_file_data('Basic Materials.htm'))
+        sector_change = get_sector_change(get_file_data('Google Finance.htm'))
+        energy = get_sector_data(get_file_data('Energy.htm'), sector_change)
+        industrials = get_sector_data(
+            get_file_data('Industrials.htm'), sector_change)
+        basic = get_sector_data(get_file_data(
+            'Basic Materials.htm'), sector_change)
 
         result["result"] = {energy[0]: energy[1],
                             industrials[0]: industrials[1], basic[0]: basic[1]}
 
-        # print(json.dumps(result))
-        get_sector_change(get_file_data('Google Finance.htm'))
+        print(json.dumps(result))
     except:
         print("Unable to process HTML files")
 
