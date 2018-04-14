@@ -26,26 +26,29 @@ def get_file_data(file_name):
         return
 
 
+def get_sector_data(data):
+    sector_dict = {}
+    rows = data.find("table", class_="topmovers").find_all("tr")
+    for row in rows:
+        name = ""
+        if not row.find("a") == None:
+            name = row.find("a").get_text()
+        cells = row.find_all("td")
+        for cell in cells:
+            if not cell.find("span", class_="chg") == None:
+                sector_dict[name] = cell.find_all("span", class_="chg")[
+                    1].get_text().split("%)")[0].split("(")[1]
+            if not cell.find("span", class_="chr") == None:
+                sector_dict[name] = cell.find_all("span", class_="chr")[
+                    1].get_text().split("%)")[0].split("(")[1]
+    print(sector_dict)
+
+
 def google_sector_report():
 
     try:
         energy_data = get_file_data('Energy.htm')
-        energy_dict = {}
-        rows = energy_data.find(
-            "table", class_="topmovers").find_all("tr")
-        for row in rows:
-            name = ""
-            if not row.find("a") == None:
-                name = row.find("a").get_text()
-            cells = row.find_all("td")
-            for cell in cells:
-                if not cell.find("span", class_="chg") == None:
-                    energy_dict[name] = cell.find_all(
-                        "span", class_="chg")[1].get_text().split("%)")[0].split("(")[1]
-                if not cell.find("span", class_="chr") == None:
-                    energy_dict[name] = cell.find_all(
-                        "span", class_="chr")[1].get_text().split("%)")[0].split("(")[1]
-        print(energy_dict)
+        get_sector_data(energy_data)
         # finance_data = get_file_data('Google Finance.htm')
         # industrial_data = get_file_data('Industrials.htm')
         # basic_mat_data = get_file_data('Basic Materials.htm')
